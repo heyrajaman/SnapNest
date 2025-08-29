@@ -2,6 +2,8 @@ import User from "../models/user.model.js";
 import Follow from "../models/follow.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import Save from "../models/save.model.js";
+import Pin from "../models/pin.model.js";
 
 export const registerUser = async (req, res) => {
   const { username, displayName, email, password } = req.body;
@@ -132,6 +134,44 @@ export const getUser = async (req, res) => {
         });
       }
     });
+  }
+};
+
+export const savePinForUser = async (req, res) => {
+  try {
+    const { id, pinId } = req.params;
+
+    const already = await Save.findOne({ user: id, pin: pinId });
+    if (already) {
+      return res.status(400).json({ error: "Pin already saved" });
+    }
+
+    const save = new Save({ user: id, pin: pinId });
+    await save.save();
+
+    res.status(201).json({ message: "Pin saved successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to save pin" });
+  }
+};
+
+export const getSavedPins = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    const saves = await Save.find({ user: userId }).populate("pin");
+
+    const trimmedPins = saves.map((s) => ({
+      id: s.pin._id,
+      media: s.pin.media,
+      description: s.pin.description,
+      tags: s.pin.tags,
+    }));
+
+    res.status(200).json(trimmedPins);
+  } catch (error) {
+    console.error("Error fetching saved pins:", error);
+    res.status(500).json({ error: "Failed to fetch saved pins" });
   }
 };
 

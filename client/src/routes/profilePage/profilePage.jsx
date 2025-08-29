@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import apiRequest from "../../utils/apiRequest";
 import Boards from "../../components/boards/boards";
 import FollowButton from "./FollowButton";
+import SavedGallery from "../../components/savedGallery/savedGallery";
 
 const ProfilePage = () => {
   const [type, setType] = useState("saved");
@@ -71,7 +72,7 @@ const ProfilePage = () => {
       {type === "created" ? (
         <Gallery userId={data._id} />
       ) : (
-        <Boards userId={data._id} />
+        <SavedGallery userId={data._id} />
       )}
     </div>
   );

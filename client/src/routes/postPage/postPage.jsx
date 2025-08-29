@@ -1,12 +1,13 @@
 import Image from "../../components/image/image";
 import PostInteractions from "../../components/postInteractions/postInteractions";
 import Comments from "../../components/comments/comments";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import apiRequest from "../../utils/apiRequest";
 
 const PostPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const { isPending, error, data } = useQuery({
     queryKey: ["pin", id],
@@ -22,6 +23,7 @@ const PostPage = () => {
   return (
     <div className="flex justify-center gap-8">
       <svg
+        onClick={() => navigate("/")}
         height="20"
         viewBox="0 0 24 24"
         width="20"
