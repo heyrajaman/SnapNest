@@ -22,7 +22,7 @@ const CommentForm = ({ id }) => {
   const mutation = useMutation({
     mutationFn: addComment,
     onSuccess: () => {
-      queryClient.invalidateQueries({ querykey: ["comments", id] });
+      queryClient.invalidateQueries({ queryKey: ["comments", id] });
       setDesc("");
       setOpen(false);
     },

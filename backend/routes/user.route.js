@@ -9,7 +9,6 @@ import {
   followUser,
 } from "../controllers/user.controller.js";
 import { verifyToken } from "../middlewares/verifyToken.js";
-import { get } from "mongoose";
 
 const router = express.Router();
 
