@@ -77,7 +77,7 @@ SnapNest is a full-stack image-sharing platform inspired by the concept of visua
 ## 🛠️ Installation & Running
 
 ### Clone the repository
-git clone https://github.com/your-username/snapnest.git
+git clone https://github.com/heyrajaman/snapnest.git
 cd snapnest
 
 ### Install backend
@@ -114,3 +114,4 @@ This project is licensed under the ISC License.
 
 ## 🤝 Contribute
 Feel free to fork the repo, raise issues, and submit PRs. Feedback and improvements are always welcome!
+
