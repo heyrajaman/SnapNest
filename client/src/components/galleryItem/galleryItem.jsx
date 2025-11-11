@@ -1,8 +1,51 @@
 import { Link } from "react-router-dom";
 import Image from "../image/image";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import apiRequest from "../../utils/apiRequest";
+import useAuthStore from "../../utils/authStore";
+
+const interact = async (id, type) => {
+  const res = await apiRequest.post(`/pins/interact/${id}`, { type });
+  return res.data;
+};
 
 const GalleryItem = ({ item }) => {
   const optimizedHeight = (372 * item.height) / item.width;
+  const queryClient = useQueryClient();
+  const { currentUser } = useAuthStore();
+
+  const { data, isPending } = useQuery({
+    queryKey: ["interactionCheck", item._id],
+    queryFn: () =>
+      apiRequest
+        .get(`/pins/interaction-check/${item._id}`)
+        .then((res) => res.data),
+    enabled: !!currentUser,
+    staleTime: 60 * 1000,
+  });
+
+  const mutation = useMutation({
+    mutationFn: ({ id, type }) => interact(id, type),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["interactionCheck", item._id],
+      });
+      if (currentUser) {
+        queryClient.invalidateQueries({
+          queryKey: ["savedPins", currentUser._id],
+        });
+      }
+    },
+  });
+
+  const handleSaveClick = (e) => {
+    e.stopPropagation();
+    if (!currentUser) {
+      alert("Please log in to save pins!");
+      return;
+    }
+    mutation.mutate({ id: item._id, type: "save" });
+  };
 
   return (
     <div
@@ -25,42 +68,19 @@ const GalleryItem = ({ item }) => {
            rounded-[16px]"
       />
       <button
+        onClick={handleSaveClick}
+        disabled={mutation.isPending || (isPending && !!currentUser)}
         className="hidden group-hover:block
            bg-[#3fbccc] text-white
            rounded-[20px]
            py-1 px-3
            font-medium cursor-pointer
            w-max absolute top-4 right-4
-           border-none"
+           border-none
+           disabled:bg-gray-400 disabled:cursor-not-allowed"
       >
-        Save
+        {data?.isSaved ? "Saved" : "Save"}
       </button>
-      <div
-        className="hidden group-hover:flex
-           absolute bottom-4 right-4
-           items-center gap-2"
-      >
-        <button
-          className="w-8 h-8
-             rounded-full
-             bg-white
-             flex items-center justify-center
-             border-none cursor-pointer
-             hover:bg-gray-100"
-        >
-          <Image src="/general/share.svg" alt="" className="w-5 h-5" />
-        </button>
-        <button
-          className="w-8 h-8
-             rounded-full
-             bg-white
-             flex items-center justify-center
-             border-none cursor-pointer
-             hover:bg-gray-100"
-        >
-          <Image src="/general/more.svg" alt="" className="w-5 h-5" />
-        </button>
-      </div>
     </div>
   );
 };

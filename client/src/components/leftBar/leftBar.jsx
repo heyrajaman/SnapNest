@@ -19,18 +19,7 @@ const LeftBar = () => {
         >
           <Image src="/general/create.svg" alt="" className="w-6 h-6" />
         </Link>
-
-        <Link to="/" className="w-12 h-12 flex items-center justify-center">
-          <Image src="/general/updates.svg" alt="" className="w-6 h-6" />
-        </Link>
-
-        <Link to="/" className="w-12 h-12 flex items-center justify-center">
-          <Image src="/general/messages.svg" alt="" className="w-6 h-6" />
-        </Link>
       </div>
-      <Link to="/" className="w-12 h-12 flex items-center justify-center">
-        <Image src="/general/settings.svg" alt="" className="w-6 h-6" />
-      </Link>
     </div>
   );
 };
