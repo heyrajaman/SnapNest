@@ -96,7 +96,11 @@ const CreatePage = () => {
           onClick={handleSubmit}
           className="bg-[#3fbccc] hover:bg-[#c1011e] text-white font-medium border-none outline-none px-2 py-2 rounded-full cursor-pointer text-[12px]"
         >
-          {isEditing ? "Done" : "Publish"}
+          {mutation.isPending
+            ? "Publishing..."
+            : isEditing
+            ? "Done"
+            : "Publish"}
         </button>
       </div>
       {isEditing ? (
