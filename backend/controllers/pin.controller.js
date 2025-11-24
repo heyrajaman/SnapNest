@@ -62,8 +62,25 @@ export const createPin = async (req, res) => {
   } = req.body;
 
   const media = req.files.media;
-  if ((!title || !description || !media)) {
+  if (!title || !description || !media) {
     return res.status(400).json({ message: "All fields are required!" });
+  }
+
+  const visualBuffer = await sharp(media.data)
+    .resize(16, 16, { fit: "fill" })
+    .grayscale()
+    .raw()
+    .toBuffer();
+
+  const visualKey = visualBuffer.toString("hex");
+
+  const existingPin = await Pin.findOne({ visualKey });
+
+  if (existingPin) {
+    return res.status(409).json({
+      message:
+        "This photo (or one that looks just like it) has already been posted.",
+    });
   }
 
   const parsedTextOptions = JSON.parse(textOptions || "{}");
@@ -160,11 +177,17 @@ export const createPin = async (req, res) => {
         media: response.filePath,
         width: response.width,
         height: response.height,
+        visualKey: visualKey,
       });
       return res.status(201).json(newPin);
     })
     .catch((err) => {
       console.log(err);
+      if (err.code === 11000) {
+        return res
+          .status(409)
+          .json({ message: "This photo has already been posted." });
+      }
       return res.status(500).json(err);
     });
 };

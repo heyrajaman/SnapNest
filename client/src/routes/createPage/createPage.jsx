@@ -56,6 +56,9 @@ const CreatePage = () => {
       resetStore();
       navigate(`/pin/${data._id}`);
     },
+    onError: (error) => {
+      alert(error.response?.data?.message || "Something went wrong");
+    },
   });
 
   const handleSubmit = async () => {

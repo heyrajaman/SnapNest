@@ -38,6 +38,11 @@ const pinSchema = new Schema(
       ref: "User",
       required: true,
     },
+    visualKey: {
+      type: String,
+      required: true,
+      unique: true,
+    },
   },
   { timestamps: true }
 );
